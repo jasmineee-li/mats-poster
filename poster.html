@@ -63,12 +63,11 @@
   /* Poster scaling wrapper */
   .poster-wrap {
     padding: 40px;
-    display: flex;
-    justify-content: center;
+    overflow: hidden;
   }
 
   .poster {
-    width: 3360px; height: 2400px;
+    width: 3456px; height: 2304px;
     background: var(--bg);
     box-shadow: 0 4px 24px rgba(0,0,0,0.15);
     display: grid;
@@ -383,13 +382,16 @@
 // --- Scaling ---
 function scalePoster() {
   document.querySelectorAll('.poster').forEach(poster => {
-    const wrapW = poster.parentElement.clientWidth;
-    const wrapH = window.innerHeight - 60;
-    const scaleX = (wrapW - 80) / 3360;
-    const scaleY = wrapH / 2400;
+    const wrap = poster.parentElement;
+    const availW = window.innerWidth - 80;
+    const availH = window.innerHeight - 60;
+    const scaleX = availW / 3456;
+    const scaleY = availH / 2304;
     const scale = Math.min(scaleX, scaleY, 1);
     poster.style.transform = `scale(${scale})`;
-    poster.parentElement.style.height = (2400 * scale + 80) + 'px';
+    wrap.style.width = (3456 * scale + 80) + 'px';
+    wrap.style.height = (2304 * scale + 80) + 'px';
+    wrap.style.margin = '0 auto';
   });
 }
 window.addEventListener('resize', scalePoster);

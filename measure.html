@@ -14,7 +14,7 @@
 <body>
 <h1>Column Height Measurement</h1>
 <div class="results" id="results">Measuring...</div>
-<iframe id="frame" src="/poster.html" width="3360" height="2400"></iframe>
+<iframe id="frame" src="/poster.html" width="3456" height="2304"></iframe>
 <script>
 const frame = document.getElementById('frame');
 frame.addEventListener('load', () => {
@@ -25,7 +25,7 @@ frame.addEventListener('load', () => {
   const cols = poster.querySelectorAll('.col');
   const header = poster.querySelector('.header');
   const headerH = header ? header.offsetHeight : 0;
-  const availableH = 2400 - headerH;
+  const availableH = 2304 - headerH;
 
   const measurements = {};
   const lines = [];

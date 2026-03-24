@@ -2,7 +2,7 @@
 
 ## Overview
 
-This is an HTML symposium poster (35" x 25", landscape) served locally with live-reload. The poster is developed
+This is an HTML symposium poster (36" x 24", landscape) served locally with live-reload. The poster is developed
 iteratively: Claude Code edits the HTML directly, the user edits text inline in the browser, and edits sync back
 to the server via `edits.json`.
 
@@ -51,7 +51,7 @@ doesn't send `Last-Modified` headers — must use `serve.py`.
 
 ### Dimensions
 
-- 3360px x 2400px (35" x 25" at 96dpi), landscape
+- 3456px x 2304px (36" x 24" at 96dpi), landscape
 - Scaled to fit viewport via CSS `transform: scale()` with JS computing the scale factor from `window.innerWidth`
 and `window.innerHeight`
 - `transform-origin: top left`

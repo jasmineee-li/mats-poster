@@ -228,9 +228,56 @@
     outline-offset: 2px;
     border-radius: 2px;
   }
+
+  /* Formatting toolbar */
+  .fmt-toolbar {
+    position: fixed; top: 44px; left: 50%; transform: translateX(-50%);
+    z-index: 2000; background: #1a1a1a; border-radius: 8px;
+    padding: 6px 10px; display: none; gap: 4px; align-items: center;
+    box-shadow: 0 4px 16px rgba(0,0,0,0.3);
+  }
+  .fmt-toolbar.visible { display: flex; }
+  .fmt-toolbar button {
+    background: none; border: 1px solid #444; color: #fff;
+    border-radius: 4px; padding: 4px 10px; cursor: pointer;
+    font-size: 13px; font-family: system-ui, sans-serif;
+    min-width: 28px;
+  }
+  .fmt-toolbar button:hover { background: #333; }
+  .fmt-toolbar .sep {
+    width: 1px; height: 20px; background: #444; margin: 0 4px;
+  }
+  .fmt-toolbar select {
+    background: #333; color: #fff; border: 1px solid #444;
+    border-radius: 4px; padding: 4px 6px; font-size: 13px;
+    cursor: pointer;
+  }
 </style>
 </head>
 <body>
+
+<!-- Formatting toolbar -->
+<div class="fmt-toolbar" id="fmtToolbar">
+  <button onclick="fmtCmd('bold')" title="Bold"><b>B</b></button>
+  <button onclick="fmtCmd('italic')" title="Italic"><i>I</i></button>
+  <div class="sep"></div>
+  <button onclick="fmtCmd('insertUnorderedList')" title="Bullet list">• list</button>
+  <button onclick="fmtCmd('insertOrderedList')" title="Numbered list">1. list</button>
+  <div class="sep"></div>
+  <select onchange="fmtFontSize(this.value); this.value='';" title="Font size">
+    <option value="">Size</option>
+    <option value="22px">22</option>
+    <option value="26px">26</option>
+    <option value="28px">28</option>
+    <option value="32px">32</option>
+    <option value="36px">36</option>
+    <option value="40px">40</option>
+    <option value="44px">44</option>
+    <option value="48px">48</option>
+    <option value="52px">52</option>
+  </select>
+  <button onclick="fmtCmd('removeFormat')" title="Clear formatting">✕</button>
+</div>
 
 <!-- Tab bar -->
 <div class="tab-bar">
@@ -539,12 +586,19 @@ async function initEditing() {
       el.contentEditable = true;
       editingActive = true;
       el.focus();
+      document.getElementById('fmtToolbar').classList.add('visible');
     });
 
-    el.addEventListener('blur', () => {
-      el.contentEditable = false;
-      editingActive = false;
-      saveEdit(el.dataset.e, el.innerHTML);
+    el.addEventListener('blur', (e) => {
+      // Delay to allow toolbar clicks to fire first
+      setTimeout(() => {
+        if (!document.querySelector('[contenteditable="true"]:focus')) {
+          el.contentEditable = false;
+          editingActive = false;
+          document.getElementById('fmtToolbar').classList.remove('visible');
+          saveEdit(el.dataset.e, el.innerHTML);
+        }
+      }, 200);
     });
 
     el.addEventListener('keydown', (e) => {
@@ -565,6 +619,21 @@ async function saveEdit(key, value) {
   } catch (e) {
     console.warn('Could not save edit:', e);
   }
+}
+
+// --- Formatting toolbar ---
+function fmtCmd(cmd) {
+  document.execCommand(cmd, false, null);
+}
+function fmtFontSize(size) {
+  if (!size) return;
+  const sel = window.getSelection();
+  if (!sel.rangeCount) return;
+  const range = sel.getRangeAt(0);
+  const span = document.createElement('span');
+  span.style.fontSize = size;
+  range.surroundContents(span);
+  sel.removeAllRanges();
 }
 
 async function resetEdits() {
